@@ -1,0 +1,11 @@
+[webservers]
+85.204.18.125
+
+[dbservers]
+85.204.18.125
+
+[lbservers]
+85.204.18.125
+
+[monitoring]
+85.204.18.125
