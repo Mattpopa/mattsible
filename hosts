@@ -1,11 +1,11 @@
 [webservers]
-85.204.18.125
+giggity_IP
 
 [dbservers]
-85.204.18.125
+giggity_IP
 
 [lbservers]
-85.204.18.125
+giggity_IP
 
 [monitoring]
-85.204.18.125
+giggity_IP
