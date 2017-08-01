@@ -1,11 +1,11 @@
 [webservers]
-giggity_IP
+85.204.18.125
 
 [dbservers]
-giggity_IP
+85.204.18.125
 
 [lbservers]
-giggity_IP
+85.204.18.125
 
 [monitoring]
-giggity_IP
+85.204.18.125

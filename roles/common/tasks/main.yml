@@ -1,6 +1,4 @@
 ---
-# This role contains common plays that will run on all nodes.
-
 - name: Fuck SE Linux
   yum: name={{ item }} state=absent
   with_items:

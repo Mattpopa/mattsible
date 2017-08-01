@@ -1,39 +1,77 @@
 global
-    log         127.0.0.1 local2 
-
-    chroot      /var/lib/haproxy
-    pidfile     /var/run/haproxy.pid
-    maxconn     4000
-    user        root
-    group       root
-    daemon
-
-    # turn on stats unix socket
-    stats socket /var/lib/haproxy/stats level admin
+        nbproc 1
+        daemon
+        maxconn 100001
+        stats socket /tmp/sock1 level admin
+        log 127.0.0.1 local0
 
 defaults
-    mode                    {{ mode }}
-    log                     global
-    option                  httplog
-    option                  dontlognull
-    option http-server-close
-    option forwardfor       except 127.0.0.0/8
-    option                  redispatch
-    retries                 3
-    timeout http-request    10s
-    timeout queue           1m
-    timeout connect         10s
-    timeout client          1m
-    timeout server          1m
-    timeout http-keep-alive 10s
-    timeout check           10s
-    maxconn                 3000
+        maxconn         100000
+        mode            {{ mode }}
+	option forwardfor       except 127.0.0.0/8
+	option prefer-last-server
+	option http-keep-alive
 
-backend app
+        timeout         connect 5000ms
+        timeout         client 20s
+        timeout         server 30m
+        timeout         http-keep-alive 15000ms
+
+        option          abortonclose    
+        option          redispatch
+        stats           enable
+        stats           hide-version
+        stats           uri     /hap-stats
+        stats           realm   LbStatistics
+        stats           auth    5eb1dc04biab98ber542a64:5901411jfhskdjfhk2346b6b3ce457d
+        stats           refresh 5s
+
+        option          httplog clf
+        log             global
+
+frontend http-in
     {% for host in groups.lbservers %}
-    	listen {{ daemonname }} 0.0.0.0:{{ listenport }}
+        bind *:{{ listenport }}
     {% endfor %}
+
     balance     {{ balance }}
-    {% for host in groups.webservers %}
-        server {{ host }} {{ hostvars[host]['ansible_' + iface].ipv4.address }}:{{ httpd_port }}
+        default_backend apache_servers
+        acl is_php path_sub -i .php
+	acl is_sdm path_beg -i /sdm /robocop
+	#reqrep ^([^\ ]*)\ (.*)/stats \1\ / if is_stats
+        acl is_static path_end -i .gif .png .jpg .jpeg .css .js .html .ico .cur .ani .txt .swf .mov .mp3 .mp4 .webm .ogv .flv .htm .xml .zip .rar
+        use_backend lighttpd_servers if is_static !is_php !is_sdm !is_stats
+	#http-request deny if !is_mgm is_sdm
+	
+frontend https-in
+    {% for host in groups.lbservers %}
+        bind *:{{ listenport }}
     {% endfor %}
+        reqadd X-Forwarded-Proto:\ https
+        option httpclose
+
+        default_backend apache_servers
+        acl is_php path_sub -i .php
+        acl is_sdm path_beg -i /sdm /robocop
+        acl is_static path_end -i .gif .png .jpg .jpeg .css .js .html .ico .cur .ani .txt .swf .mov .mp3 .mp4 .webm .ogv .flv .htm .xml .zip .rar
+        use_backend lighttpd_servers if is_static !is_php !is_sdm
+        #http-request deny if !is_mgm is_sdm
+
+    backend apache_servers
+	balance     {{ balance }}
+        cookie HAPPIDS insert indirect nocache maxidle 60m maxlife 24h
+	{% for host in groups.webservers %}
+        server s1 127.0.0.1:{{ httpd_port }} maxconn 15 cookie a1 check maxqueue 200
+	{% endfor %}
+
+    backend lighttpd_servers
+	balance     {{ balance }}
+	{% for host in groups.webservers %}
+        server s1 127.0.0.1:{{ lighty_port }} maxconn 300 check maxqueue 1000
+	{% endfor %}
+
+    backend nginx_servers
+	balance     {{ balance }}
+	{% for host in groups.webservers %}
+        server s1 127.0.0.1:{{ nginx_port }} maxconn 200 check maxqueue 1000
+	{% endfor %}
