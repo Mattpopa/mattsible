@@ -1,0 +1,39 @@
+[global]
+logfile=/var/log/httpd/suphp_log
+loglevel=error
+webserver_user=nobody
+docroot=/var/www:/storage/web:/home
+env_path=/bin:/usr/bin:/usr/sbin
+
+;Umask to set, specify in octal notation (Change it to 0022)
+umask=0022
+
+; Minimum UID (your users may / normally start from 500 )
+min_uid=48
+
+; Minimum GID (change 100 to 48 for GID of apache )
+min_gid=48
+
+; Security options
+allow_file_group_writeable=false
+allow_file_others_writeable=false
+allow_directory_group_writeable=false
+allow_directory_others_writeable=false
+
+;Check wheter script is within DOCUMENT_ROOT
+check_vhost_docroot=false
+
+;Send minor error messages to browser
+
+errors_to_browser=false
+
+; Handler for php-scripts (MUST: change the following to php-cgi instead of php)
+;x-httpd-php=php:/usr/bin/php
+;x-httpd-suphp="php:/usr/bin/php-cgi"
+
+[handlers]
+;Handler for php-scripts
+application/x-httpd-suphp="php:/usr/bin/php-cgi"
+
+;Handler for CGI-scripts
+x-suphp-cgi="execute:!self"

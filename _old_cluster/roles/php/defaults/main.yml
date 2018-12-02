@@ -1,0 +1,164 @@
+---
+php_enablerepo: ""
+
+php_packages_state: installed
+
+php_install_recommends: no
+
+# Set this to false if you're not using PHP with Apache/Nginx/etc.
+php_enable_webserver: true
+
+# PHP-FPM configuration.
+php_enable_php_fpm: false
+php_fpm_listen: "127.0.0.1:9000"
+php_fpm_listen_allowed_clients: "127.0.0.1"
+php_fpm_pm_max_children: 50
+php_fpm_pm_start_servers: 5
+php_fpm_pm_min_spare_servers: 5
+php_fpm_pm_max_spare_servers: 5
+
+# The executable to run when calling PHP from the command line.
+php_executable: "php"
+
+# OpCache settings (useful for PHP >=5.5).
+php_opcache_zend_extension: "opcache.so"
+php_opcache_enable: "1"
+php_opcache_enable_cli: "0"
+php_opcache_memory_consumption: "96"
+php_opcache_interned_strings_buffer: "16"
+php_opcache_max_accelerated_files: "4096"
+php_opcache_max_wasted_percentage: "5"
+php_opcache_validate_timestamps: "1"
+php_opcache_revalidate_path: "0"
+php_opcache_revalidate_freq: "2"
+php_opcache_max_file_size: "0"
+php_opcache_blacklist_filename: ""
+
+# APCu settings.
+php_enable_apc: false
+php_apc_shm_size: "96M"
+php_apc_enable_cli: "0"
+
+# If this is set to false, none of the following options will have any effect.
+# Any and all changes to /etc/php.ini will be your responsibility.
+php_use_managed_ini: true
+
+php_expose_php: "On"
+php_memory_limit: "256M"
+php_max_execution_time: "60"
+php_max_input_time: "60"
+php_max_input_vars: "1000"
+php_realpath_cache_size: "32K"
+
+php_file_uploads: "On"
+php_upload_max_filesize: "64M"
+php_max_file_uploads: "20"
+
+php_post_max_size: "32M"
+php_date_timezone: "Europe/Bucharest"
+php_allow_url_fopen: "On"
+
+php_sendmail_path: "/usr/sbin/sendmail -t -i"
+php_output_buffering: "4096"
+php_short_open_tag: "Off"
+php_disable_functions: []
+
+php_session_cookie_lifetime: 0
+php_session_gc_probability: 1
+php_session_gc_divisor: 1000
+php_session_gc_maxlifetime: 1440
+php_session_save_handler: files
+php_session_save_path: '/tmp'
+
+php_error_reporting: "E_ALL & ~E_DEPRECATED & ~E_STRICT"
+php_display_errors: "Off"
+php_display_startup_errors: "Off"
+
+php_install_from_source: true
+#php_source_version: "master"
+#php_source_version: "php-7.1"
+#php_source_version: "php-7.0"
+#php_source_version: "php-7.1.5"
+#php_source_version: "php-7.0.19"
+#php_source_version: "php-7.0.18"
+#php_source_version: "php-7.1.4"
+#php_source_version: "php-7.1.3"
+#php_source_version: "php-7.0.17"
+#php_source_version: "php-7.0.16"
+#php_source_version: "php-7.1.2"
+#php_source_version: "php-5.6"
+php_source_version: "php-5.6.30"
+#php_source_version: "php-7.1.1"
+#php_source_version: "php-7.0.15"
+#php_source_version: "php-5.6.29"
+php_source_clone_dir: "~/php-src"
+#php_source_clone_depth: 1
+php_source_install_path: "/opt/php"
+#php_source_install_gmp_path: "/usr/include/x86_64-linux-gnu/gmp.h"
+php_source_make_command: "make"
+php_source_configure_command: >
+        ./configure
+        --prefix={{ php_source_install_path }}
+        --with-config-file-path={{ php_conf_paths | first }}
+        --sbindir=/usr/sbin
+        --sysconfdir=/etc
+        --datadir=/usr/share
+        --includedir=/usr/include
+        --libdir=/usr/lib64
+        --libexecdir=/usr/libexec
+        --localstatedir=/var
+        --mandir=/usr/share/man
+        --infodir=/usr/share/info
+        --cache-file=../config.cache
+        --with-libdir=lib64
+        --with-config-file-path=/etc
+        --with-config-file-scan-dir=/etc/php.d
+        --disable-debug
+        --with-pic
+        --disable-rpath
+        --with-layout=GNU
+        --with-apxs2=/usr/sbin/apxs
+        --with-bz2
+        --enable-ctype
+        --with-curl
+        --enable-dom
+        --enable-libxml
+        --with-gmp
+        --enable-hash
+        --with-gd
+        --with-jpeg-dir
+        --with-png-dir
+        --enable-json
+        --enable-mbstring
+        --with-mcrypt
+        --with-mysqli=/usr/bin/mysql_config
+        --with-pcre-regex
+        --enable-pdo
+        --with-pdo-mysql
+        --enable-posix
+        --enable-simplexml
+        --enable-sockets
+        --with-zlib
+        --disable-bcmath
+        --disable-calendar
+        --disable-exif
+        --without-gettext
+        --without-mhash
+        --with-openssl
+        --without-pspell
+        --without-readline
+        --disable-sysvsem
+        --disable-sysvshm
+        --disable-sysvmsg
+        --disable-shmop
+        --enable-soap
+        --without-tidy
+        --enable-zip
+        --with-imap
+        --with-imap-ssl
+        --with-kerberos
+        --enable-opcache
+        --enable-fpm
+        --with-freetype-dir=/usr
+        --enable-gd-native-ttf
+        --enable-intl
