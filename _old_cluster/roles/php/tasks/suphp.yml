@@ -1,0 +1,8 @@
+---
+- name: Define SU path
+  set_fact:
+          php_su_conf_path: "{{ __php_su_pool_conf_path }}"
+  when: php_su_conf_path is not defined
+
+- name: Stat SU conf path
+  set_fact:
